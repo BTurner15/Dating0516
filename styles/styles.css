@@ -1,0 +1,18 @@
+.one {
+    height: 200px;
+    width: 100px;
+    background-color: lightblue;
+}
+.two {
+    height: 300px;
+    width: 150px;
+    background-color: black;
+}
+.three {
+    height: 400px;
+    width: 200px;
+    background-color: lightgreen;
+}
+.err {
+    color: darkred;
+}

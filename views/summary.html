@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!-- Bruce Turner, Professor Ostrander, Spring 2019 -->
+<!-- IT 328 Full Stack Web Development -->
+<!-- Dating 2 Assignment -->
+<!-- file: views/summary.html -->
+<!-- date: Saturday May 11 2019 -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Dating II Site</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-sm  navbar-default">
+    <a class="navbar-brand" href="#">My Dating Website</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar"><span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
+<div class="container border mt-4">
+    <div class="row ml-2">
+        <div class="col-sm-12">
+            <h1>Contact Me!</h1>
+        </div>
+    </div>
+        <div class="row ml-2">
+            <div class="col-sm-6">
+                <div class="container border mt-4">
+                   Name: {{$_SESSION['fname']}} {{$_SESSION['lname']}} <br>
+                </div>
+                <div class="container border mt-4">
+                Gender: {{$_SESSION['gender']}} <br>
+                </div>
+                <div class="container border mt-4">
+                Age:  {{$_SESSION['age']}}<br>
+                </div>
+                <div class="container border mt-4">
+                    Phone: {{$_SESSION['phone']}} <br>
+                </div>
+                <div class="container border mt-4">
+                    Email: {{$_SESSION['email']}} <br>
+                </div>
+                <div class="container border mt-4">
+                    State: {{$_SESSION['resState']}} <br>
+                </div>
+                <div class="container border mt-4">
+                Seeking: {{$_SESSION['seekSex']}} <br>
+                </div>
+                <div class="container border mt-4">
+                Interests: {{$_SESSION['indoor']}} {{$_SESSION['outdoor']}}<br>
+                </div>
+            </div> <!-- end row#1 col one-->
+            <div class="col-sm-6">
+                <div class="col-sm-6">
+                    <img class="img-responsive rounded" src="images/anonymous.JPG" style="width:400px" alt="generic human" > <br>
+                </div>
+                <br>
+                <div>
+                    Biography<br><br>
+                    <textarea name="bio" id="bio" cols="50" rows="10">{{$_SESSION['bio']}}</textarea><br>
+                </div>
+                <br>
+            </div>
+            <br><br>
+
+            <!-- <div> -->
+        </div>
+    <br>
+<div id="btn" class="container text-md-center pb-2">
+    <button  class="btn-primary btn-sm rounded" type="submit">Contact Me!</button></div>
+</div> <!-- close main container -->
+</body>
+</html>

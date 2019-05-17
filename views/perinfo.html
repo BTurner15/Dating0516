@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- Bruce Turner, Professor Ostrander, Spring 2019 -->
+<!-- IT 328 Full Stack Web Development -->
+<!-- Dating II-b Assignment -->
+<!-- file: views/perinfo.html -->
+<!-- date: Saturday 11 2019 -->
+<!-- version: 2.0 -->
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <title>My Dating II Site</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+     <link rel="stylesheet" type="text/css" href="styles/styles.css">
+
+</head>
+<body>
+<nav class="navbar navbar-expand-sm  navbar-default">
+     <a class="navbar-brand" href="#">My Dating Website</a>
+     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar"><span class="navbar-toggler-icon"></span>
+     </button>
+</nav>
+<div class="container border mt-4">
+     <div class="row ml-2">
+          <div class="col-sm-12">
+               <h1>Personal Information</h1>
+          </div>
+     </div>
+     <form class="form-group" method="post" action="#">
+          <div class="row ml-2">
+               <div class="col-sm-8">
+                    <strong>First Name</strong><br>
+                    <label class="form-control-label" >
+                         <input id="fname" required class="form-control" type="text" name="fname" value="{{ @SESSION['fname'] }}">
+                         <check if="{{ @errors['fname'] }}">
+                              <span class="err">{{ @errors['fname'] }}</span>
+                         </check>
+                    </label><br>
+                    <strong>Last Name</strong><br>
+                    <label class="form-control-label" >
+                         <input id="lname" required class="form-control" type="text" name="lname" value="{{ @SESSION['lname'] }}">
+                         <check if="{{ @errors['lname'] }}">
+                              <span class="err">{{ @errors['lname'] }}</span>
+                         </check>
+                    </label><br>
+                    <strong>Age</strong><br>
+                    <label class="form-control-label" >
+                         <input id="age" required class="form-control" type="text" name="age" value="{{ @SESSION['age'] }}">
+                         <check if="{{ @errors['age'] }}">
+                              <span class="err">{{ @errors['age'] }}</span>
+                         </check>
+                    </label><br>
+                    <p><strong>Gender</strong>
+                         <check if="{{ @errors['gender'] }}">
+                              <span class="err">{{ @errors['gender'] }}</span>
+                         </check><br>
+                         <repeat group="{{ @genders }}" value="{{ @genderOption }}">
+                              <label><input type="radio" name="gender" value="{{ @genderOption }}"
+                                   <check if="{{ @genderOption == @gender }}">
+                                        checked="checked"
+                                   </check>
+                                   >{{ @genderOption }}
+                              </label><br>
+                         </repeat>
+                    </p>
+                    <strong>Phone Number</strong><br>
+                    <label>
+                         <input id="phone" required class="form-control" type="tel" name="phone" value="{{ @SESSION['phone'] }}"><br>
+                    </label>
+               </div> <!-- end row#1 col one-->
+               <div class="col-sm-4">
+                    <div class="container text-center" style="">
+                    <p class="bg-light border"><strong>Note: </strong>All information entered is protected by our <span style="color:lightskyblue">privacy policy</span>.
+                         Profile information can only be viewed by others with your permission.</p>
+                    </div>
+               </div>
+          </div> <!-- end row#1 -->
+          <div id="btn" class="container text-md-right pb-2">
+               <button  class="btn-primary btn-sm rounded" type="submit">Next ></button>
+          </div>
+     </form>
+</div> <!-- close main container -->
+</body>
+</html>

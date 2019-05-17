@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Bruce Turner, Professor Ostrander, Spring 2019 -->
+<!-- IT 328 Full Stack Web Development -->
+<!-- Dating 2 Assignment -->
+<!-- file: views/home.html -->
+<!-- date: April 20 2019 -->
+<head>
+    <meta charset="UTF-8">
+    <title>My Dating II Site</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm  navbar-default">
+        <a class="navbar-brand" href="#">My Dating Website</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+<div class="container border mt-1">
+    <div class="row ml-2">
+        <div class="col-sm-6">
+            <h1 class="text-center">My Dating Website</h1>
+            <p class="text-center">Welcome to the web's most successful website. At <strong>My Dating Website</strong>
+                you'll meet other like minded individuals. We have the highest success rate of couples on the web.
+                User's are matched by interest and location. Find out why so many others have found love on our site!</p>
+            <h5>Hear what our users are saying about us.</h5>
+            <hr/>
+            <p><i>"I met the love of my life after only a month!" - Andrea</i> </p>
+            <p><i>"It was so easy to set up and profile and start meeting people.
+                I didn't realize how many others were looking for love in my area." - John Smith</i>  </p>
+            <p><i>"Just try it! You'll never been the same!"</i>  </p>
+            <hr/>
+        </div>
+        <div class="col-sm-6">
+            <img class="img-responsive rounded" src="images/couple.JPG" style="width:400px" alt="Happy couple" >
+        </div>
+    </div>
+    <form action="perinfo" method="GET">
+        <div class="col-sm-6 text-center">
+            <button type="submit" class="btn-primary btn center rounded">Create a Profile!</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
