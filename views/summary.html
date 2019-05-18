@@ -30,29 +30,34 @@
         <div class="row ml-2">
             <div class="col-sm-6">
                 <div class="container border mt-4">
-                   Name: {{$_SESSION['fname']}} {{$_SESSION['lname']}} <br>
+                   <!-- Name: {{$_SESSION['fname']}} {{$_SESSION['lname']}} <br> -->
+                    Name: {{ $_SESSION['member']->getFname()}} {{ $_SESSION['member']->getLname()}} <br>
                 </div>
                 <div class="container border mt-4">
-                Gender: {{$_SESSION['gender']}} <br>
+                Gender: {{ $_SESSION['member']->getGender() }} <br>
                 </div>
                 <div class="container border mt-4">
-                Age:  {{$_SESSION['age']}}<br>
+                Age:  {{ $_SESSION['member']->getAge() }}<br>
                 </div>
                 <div class="container border mt-4">
-                    Phone: {{$_SESSION['phone']}} <br>
+                    Phone: {{ $_SESSION['member']->getPhone() }} <br>
                 </div>
                 <div class="container border mt-4">
-                    Email: {{$_SESSION['email']}} <br>
+                    Email: {{ $_SESSION['member']->getEmail() }} <br>
                 </div>
                 <div class="container border mt-4">
-                    State: {{$_SESSION['resState']}} <br>
+                    State: {{ $_SESSION['member']->getState() }} <br>
                 </div>
                 <div class="container border mt-4">
-                Seeking: {{$_SESSION['seekSex']}} <br>
+                Seeking: {{ $_SESSION['member']->getSeeking() }} <br>
                 </div>
-                <div class="container border mt-4">
-                Interests: {{$_SESSION['indoor']}} {{$_SESSION['outdoor']}}<br>
-                </div>
+                <!-- don't display interests if not premium -->
+                <check if="{{ isset(@SESSION.premium) }}" >
+                   <div class="container border mt-4">
+                       Interests: {{ $_SESSION['member']->getIndoor() }} {{$_SESSION['member']->getOutdoor() }}<br>
+
+                   </div>
+                </check>
             </div> <!-- end row#1 col one-->
             <div class="col-sm-6">
                 <div class="col-sm-6">
@@ -61,7 +66,7 @@
                 <br>
                 <div>
                     Biography<br><br>
-                    <textarea name="bio" id="bio" cols="50" rows="10">{{$_SESSION['bio']}}</textarea><br>
+                    <textarea name="bio" id="bio" cols="50" rows="10">{{ $_SESSION['member']->getBio() }}</textarea><br>
                 </div>
                 <br>
             </div>

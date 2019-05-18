@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!-- Bruce Turner, Professor Ostrander, Spring 2019 -->
 <!-- IT 328 Full Stack Web Development -->
-<!-- Dating II-b Assignment -->
+<!-- Dating III Assignment -->
 <!-- file: views/perinfo.html -->
-<!-- date: Saturday 11 2019 -->
+<!-- date: Thursday 16 2019 -->
 <!-- version: 2.0 -->
 <html lang="en">
 <head>
@@ -70,6 +70,14 @@
                     <label>
                          <input id="phone" required class="form-control" type="tel" name="phone" value="{{ @SESSION['phone'] }}"><br>
                     </label>
+                    <div class="form-group">
+                         <label class="font-weight-bold" for="premium">Premium Membership:</label>
+                         <br />
+                         <label><input type="checkbox" value="" name="premium" id="premium"
+                              <check if="{{isset(@SESSION.premium)}}" >
+                                   checked
+                              </check>> Sign me up for a Premium Account!</label>
+                    </div>
                </div> <!-- end row#1 col one-->
                <div class="col-sm-4">
                     <div class="container text-center" style="">

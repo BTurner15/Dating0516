@@ -3,7 +3,7 @@
  * IT 328 Full Stack Web Development
  * Dating III Assignment: incorporate classes
  * file: index.php  is the default landing page, defines various routes
- * date: Thursday, May 15 2019
+ * date: Friday, May 17 2019
 */
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -66,8 +66,12 @@ $f3->route('GET /', function(){
 //Define a personal information route
 $f3->route('GET|POST /perinfo', function($f3) {
     //Display personal information, upon completion REROUTES to profile
-    //If form has been submitted, validate
-    print_r($_POST);
+    //If form has been submitted, validate. The wrinkle with Dating III is to
+    //"
+    //- instantiate the appropriate class -- Member or PremiumMember -- depending on whether or not the checkbox was selected
+    //- save the form data to the appropriate member object
+    //- store the member object in a session variable
+    //"
     if(!empty($_POST)) {
         //Get data from form
         $fname = $_POST['fname'];
@@ -75,6 +79,7 @@ $f3->route('GET|POST /perinfo', function($f3) {
         $age= $_POST['age'];
         $gender = $_POST['gender'];
         $phone = $_POST['phone'];
+        $premium = $_POST['premium'];
 
         //Add data to hive
         $f3->set('fname', $fname);
@@ -82,7 +87,7 @@ $f3->route('GET|POST /perinfo', function($f3) {
         $f3->set('age', $age);
         $f3->set('gender', $gender);
         $f3->set('phone', $phone);
-
+        $f3->set('premium', $premium);
         if (validPerinfoForm()) {
 
             //Write data to Session
@@ -91,11 +96,28 @@ $f3->route('GET|POST /perinfo', function($f3) {
             $_SESSION['age'] = $_POST['age'];
             $_SESSION['gender'] = $_POST['gender'];
             $_SESSION['phone'] = $_POST['phone'];
+            $_SESSION['premium'] = $_POST['premium'];
+            //now fold in the classes...parse on PremiumMember checkbox, if we are in a  mode with
+            //an "ordinary" Member then !premium will be true
+            $isPremium = $f3->get('premium');
+            if(!$isPremium)
+            {
+                $member = new Member($_SESSION['fname'],$_SESSION['lname'],$_SESSION['age'],
+                                     $_SESSION['gender'],$_SESSION['phone']);
+            }
+            else
+            {
+                $member = new PremiumMember($_SESSION['fname'],$_SESSION['lname'],$_SESSION['age'],
+                                            $_SESSION['gender'],$_SESSION['phone']);
+            }
+            //store the individual either way
+            $_SESSION['member'] = $member;
+            //we are only going to store in the $_SESSION[] NOT $f3->set('member', $member);
+
             $f3->reroute('/profile');
         }
     }
     //Display personal information, until REROUTED to  profile in above
-    print_r($_POST);
     $view = new Template();
     echo $view->render('views/perinfo.html');
 });
@@ -103,31 +125,48 @@ $f3->route('GET|POST /perinfo', function($f3) {
 //Define a profile route
 $f3->route('GET|POST /profile', function($f3) {
     //Display profile information, upon completion REROUTES to interests
-    //If form has been submitted, validate
+    //if and only if (IFF - I always liked this acronym!) the individual is a PremiumMember
+    //make sure that se have a clean slate here
+    $_SESSION['email'] = null;
+    $_SESSION['resState'] = null;
+    $_SESSION['seekSex'] = null;
+    $_SESSION['bio'] = null;
 
     if(!empty($_POST)) {
-        //Get data from form
+        //Add data to hive
         $email = $_POST['email'];
         $resState = $_POST['resState'];
         $seekSex = $_POST['seekSex'];
         $bio = $_POST['bio'];
 
-        //Add data to hive
         $f3->set('email', $email);
         $f3->set('resState', $resState);
         $f3->set('seekSex', $seekSex);
         $f3->set('bio', $bio);
+         if (validProfileForm()) {
 
-        //echo "<br>".validEmail($f3->get('email')."<br>");
-
-        if (validProfileForm()) {
-            //Write data to Session
             $_SESSION['email'] = $_POST['email'];
             $_SESSION['resState'] = $_POST['resState'];
             $_SESSION['seekSex'] = $_POST['seekSex'];
             $_SESSION['bio'] = $_POST['bio'];
 
-            $f3->reroute('/interests');
+            //we must remember Dating III is all about objects.
+            //USED to store individual data items in the $_SESSION[] data structure by name.
+            //continuing to do so is redundant
+            $_SESSION['member']->setEmail($_POST['email']);
+            $_SESSION['member']->setState($_POST['state']);
+            $_SESSION['member']->setSeeking($_POST['seekSex']);
+            $_SESSION['member']->setBio($_POST['bio']);
+
+            //Ok, the time has come to decide whether to display the interest to the Member (or not)
+            if(!isset($_SESSION['premium']))
+            {
+                $f3->reroute('/summary');
+            }
+            else
+            {
+                $f3->reroute('/interests');
+            }
         }
     }
     //Display profile, until REROUTED to  interests in above
@@ -135,24 +174,19 @@ $f3->route('GET|POST /profile', function($f3) {
     echo $view->render('views/profile.html');
 });
 
-//Define a interests route
+//Define a interests route. We will only get here via reroute from profile.html
 $f3->route('GET|POST /interests', function($f3) {
     $_SESSION['indoor'] = array();
     $_SESSION['outdoor'] = array();
 
     if(!empty($_POST)) {
         //Display interests, until REROUTED to summary
-        //Get data from form
-        $indoor = $_POST['indoor'];
-        $outdoor = $_POST['outdoor'];
-        //Add data to hive
-        $f3->set('indoor', $indoor);
-        $f3->set('outdoor', $outdoor);
-
+        //form valid?
         if (validInterestsForm()) {
-            //Write data to Session
-            $_SESSION['indoor'] = $_POST['indoor'];
-            $_SESSION['outdoor'] = $_POST['outdoor'];
+            //Write data to Session "member" object
+            $_SESSION['member']->setIndoor($_POST['indoor']);
+            $_SESSION['member']->setOutdoor = $_POST['outdoor'];
+
             $f3->reroute('/summary');
         }
     }
@@ -165,54 +199,50 @@ $f3->route('GET|POST /summary', function($f3) {
     /*
      * want to pause here and ensure that we have not been spoofed with indoor & outdoor interests arrays
      */
-    //save the data gathered in interests
-    $indoor = $_POST['indoor'];
-    $freshIndoor = array();
-    $numElements = count($indoor);
-    $ctr = -1;
-    for ($i = 0; $i < $numElements; $i++) {
-        if(validIndoor($indoor[$i]))
-        {
-            $ctr++;
-            $freshIndoor[$ctr] = $indoor[$i];
+    //save the data gathered in interests IF A PREMIUM MEMBER
+    print_r($_SESSION['member']);
+
+    if(isset($_SESSION['premium'])) {
+        $indoor = $_POST['indoor'];
+        $freshIndoor = array();
+        $numElements = count($indoor);
+        $ctr = -1;
+        for ($i = 0; $i < $numElements; $i++) {
+            if (validIndoor($indoor[$i])) {
+                $ctr++;
+                $freshIndoor[$ctr] = $indoor[$i];
+            } else {
+                //skip it
+            }
         }
-        else{
-            //skip it
+        $_SESSION['indoor'] = $freshIndoor;
+
+        $outdoor = $_POST['outdoor'];
+        $freshOutdoor = array();
+        $numElements = count($outdoor);
+        $ctr = -1;
+        for ($i = 0; $i < $numElements; $i++) {
+            if (validOutdoor($outdoor[$i])) {
+                $ctr++;
+                $freshOutdoor[$ctr] = $outdoor[$i];
+            } else {
+                //skip it
+            }
+        }
+        $_SESSION['outdoor'] = $freshOutdoor;
+        //we have the two sets of allowable interests available in the two arrays loaded at
+        //the beginning, our buddies indoorInterests[] and outdoorInterests[]
+        //just waiting for us! Yeah!
+
+        if (isset($_SESSION['indoor'])) {
+            $_SESSION['member']->setIndoor(implode(", ", $_SESSION['indoor']));
+        }
+
+        if (isset($_SESSION['outdoor'])) {
+            $_SESSION['member']->setOutdoor(implode(", ", $_SESSION['outdoor']));
         }
     }
-    $f3->set('indoor', $freshIndoor);
-    $_SESSION['indoor'] = $freshIndoor;
-
-    $outdoor = $_POST['outdoor'];
-    $freshOutdoor = array();
-    $numElements = count($outdoor);
-    $ctr = -1;
-    for ($i = 0; $i < $numElements; $i++) {
-        if(validOutdoor($outdoor[$i]))
-        {
-            $ctr++;
-            $freshOutdoor[$ctr] = $outdoor[$i];
-        }
-        else{
-            //skip it
-        }
-    }
-    $f3->set('outdoor', $freshOutdoor);
-    $_SESSION['outdoor'] = $freshOutdoor;
-    //we have the two sets of allowable indoor and outdoor interests available in
-    //indoorInterests and outdoorInterests.
-
-    if(isset($_SESSION['indoor']))
-    {
-        $_SESSION['indoor'] = implode(", ", $freshIndoor);
-    }
-
-    if(isset($_SESSION['outdoor']))
-    {
-        $_SESSION['outdoor'] = implode(", ", $freshOutdoor);
-    }
-
-    //Display summary, which concludes Dating II
+    //Display summary, which concludes Dating III
     $view = new Template();
     echo $view->render('views/summary.html');
 });
