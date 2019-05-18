@@ -21,8 +21,9 @@
 //3456789_123456789_123456789_123456789_123456789_123456789_123456789_1234567890
 // the above is 80 characters
 /**
- * Class Member: the basic class, everyone is at least a Member. If they are
- * a premium member, they started as a Member
+ *  Class Member: the basic class, everyone is at least a Member. If they are
+ *  a premium member, they started as a Member.
+ *  private methods and properties are NOT inherited.
  */
 class Member
 {

@@ -3,7 +3,7 @@
  * IT 328 Full Stack Web Development
  * Dating III Assignment: incorporate classes
  * file: index.php  is the default landing page, defines various routes
- * date: Friday, May 17 2019
+ * date: Saturday, May 18 2019
 */
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -121,7 +121,37 @@ $f3->route('GET|POST /perinfo', function($f3) {
     $view = new Template();
     echo $view->render('views/perinfo.html');
 });
+//Define a debug route
+$f3->route('GET|POST /debug', function() {
+    // here we will instantiate two Members, one a "regular" Member, and another
+    // a PremiumMember. Then use print_r() to look at them, and test the getters and setters
 
+        $buckaroo = new Member('Buckaroo','Turner','24',
+                             'Male','1234567890');
+
+        $summer = new PremiumMember('Summer', 'Turner', '18',
+                               'Female', '0987654321','Summer@gmail.com',
+                                 'WA', 'Male', 'The best female ever!');
+        print_r($buckaroo);
+        echo "<br>"; echo "<br>";
+        $buckaroo->setSeeking("FEMALE");
+        $buckaroo->setState("PA");
+        $buckaroo->setEmail("Buckaroo@foo.com");
+        $buckaroo->setBio("I came to live with Papi, and then Summer joined us");
+
+        print_r($summer);
+        echo "<br>"; echo "<br>";
+        $summer->setIndoor("in_1 in_2 in_3");
+        $summer->setOutdoor("o_A o_B o_C");
+        print_r($summer);
+
+        echo "<br>"; echo "<br>";
+        print_r($buckaroo);
+        //try something you should NOT be able to do: display interests on Member
+        echo "<br>"; echo $summer->getIndoor();
+        $buckaroo->setOutdoor("this should error out");
+
+});
 //Define a profile route
 $f3->route('GET|POST /profile', function($f3) {
     //Display profile information, upon completion REROUTES to interests
@@ -151,10 +181,11 @@ $f3->route('GET|POST /profile', function($f3) {
             $_SESSION['bio'] = $_POST['bio'];
 
             //we must remember Dating III is all about objects.
-            //USED to store individual data items in the $_SESSION[] data structure by name.
+            //Formerly I USED to store individual data items in the $_SESSION[] data structure by name.
             //continuing to do so is redundant
+
             $_SESSION['member']->setEmail($_POST['email']);
-            $_SESSION['member']->setState($_POST['state']);
+            $_SESSION['member']->setState($_POST['resState']);
             $_SESSION['member']->setSeeking($_POST['seekSex']);
             $_SESSION['member']->setBio($_POST['bio']);
 
@@ -185,7 +216,7 @@ $f3->route('GET|POST /interests', function($f3) {
         if (validInterestsForm()) {
             //Write data to Session "member" object
             $_SESSION['member']->setIndoor($_POST['indoor']);
-            $_SESSION['member']->setOutdoor = $_POST['outdoor'];
+            $_SESSION['member']->setOutdoor($_POST['outdoor']);
 
             $f3->reroute('/summary');
         }
@@ -216,7 +247,7 @@ $f3->route('GET|POST /summary', function($f3) {
             }
         }
         $_SESSION['indoor'] = $freshIndoor;
-
+        //perform a similar duty to check for spoofing in outdoor interests
         $outdoor = $_POST['outdoor'];
         $freshOutdoor = array();
         $numElements = count($outdoor);
@@ -230,17 +261,20 @@ $f3->route('GET|POST /summary', function($f3) {
             }
         }
         $_SESSION['outdoor'] = $freshOutdoor;
+        //print_r($freshOutdoor);
+        //print_r($freshIndoor);
         //we have the two sets of allowable interests available in the two arrays loaded at
         //the beginning, our buddies indoorInterests[] and outdoorInterests[]
         //just waiting for us! Yeah!
 
-        if (isset($_SESSION['indoor'])) {
+        if (isset($_SESSION['indoor']) && get_class($_SESSION['member']) == "PremiumMember") {
             $_SESSION['member']->setIndoor(implode(", ", $_SESSION['indoor']));
         }
 
-        if (isset($_SESSION['outdoor'])) {
+        if (isset($_SESSION['outdoor']) && get_class($_SESSION['member']) == "PremiumMember") {
             $_SESSION['member']->setOutdoor(implode(", ", $_SESSION['outdoor']));
         }
+
     }
     //Display summary, which concludes Dating III
     $view = new Template();
