@@ -27,56 +27,56 @@
             <h1>Contact Me!</h1>
         </div>
     </div>
-        <div class="row ml-2">
-            <div class="col-sm-6">
-                <div class="container border mt-4">
-                   <!-- Name: {{$_SESSION['fname']}} {{$_SESSION['lname']}} <br> -->
-                    Name: {{ @SESSION['member']->getFname()}} {{ @SESSION['member']->getLname()}} <br>
-                </div>
-                <div class="container border mt-4">
-                Gender: {{ @SESSION['member']->getGender() }} <br>
-                </div>
-                <div class="container border mt-4">
-                Age:  {{ @SESSION['member']->getAge() }}<br>
-                </div>
-                <div class="container border mt-4">
-                    Phone: {{ @SESSION['member']->getPhone() }} <br>
-                </div>
-                <div class="container border mt-4">
-                    Email: {{ @SESSION['member']->getEmail() }} <br>
-                </div>
-                <div class="container border mt-4">
-                    State: {{ @SESSION['member']->getState() }} <br>
-                </div>
-                <div class="container border mt-4">
-                Seeking: {{ @SESSION['member']->getSeeking() }} <br>
-                </div>
-                <!-- don't display interests if not premium -->
-                <check if="{{ isset(@SESSION['premium'] }}" >
-                   <div class="container border mt-4">
-                       Interests: {{ @SESSION['member']->getIndoor() }} {{@SESSION['member']->getOutdoor() }}<br>
-
-                   </div>
-                </check>
-            </div> <!-- end row#1 col one-->
-            <div class="col-sm-6">
-                <div class="col-sm-6">
-                    <img class="img-responsive rounded" src="images/anonymous.JPG" style="width:400px" alt="generic human" > <br>
-                </div>
-                <br>
-                <div>
-                    Biography<br><br>
-                    <textarea name="bio" id="bio" cols="50" rows="10">{{ $_SESSION['member']->getBio() }}</textarea><br>
-                </div>
-                <br>
+    <div class="row ml-2">
+        <div class="col-sm-6">
+            <div class="container border mt-4">
+                <!-- Name: {{$_SESSION['fname']}} {{$_SESSION['lname']}} <br> -->
+                Name: {{ @SESSION['member']->getFname()}} {{ @SESSION['member']->getLname()}} <br>
             </div>
-            <br><br>
+            <div class="container border mt-4">
+                Gender: {{ @SESSION['member']->getGender() }} <br>
+            </div>
+            <div class="container border mt-4">
+                Age:  {{ @SESSION['member']->getAge() }}<br>
+            </div>
+            <div class="container border mt-4">
+                Phone: {{ @SESSION['member']->getPhone() }} <br>
+            </div>
+            <div class="container border mt-4">
+                Email: {{ @SESSION['member']->getEmail() }} <br>
+            </div>
+            <div class="container border mt-4">
+                State: {{ @SESSION['member']->getState() }} <br>
+            </div>
+            <div class="container border mt-4">
+                Seeking: {{ @SESSION['member']->getSeeking() }} <br>
+            </div>
+            <!-- don't display interests if not premium -->
+            <check if="{{ @SESSION['memberType'] == 1 }}" >
+                <div class="container border mt-4">
+                    Interests: {{ @SESSION['member']->getIndoor() }}, {{@SESSION['member']->getOutdoor() }}<br>
 
-            <!-- <div> -->
+                </div>
+            </check>
+        </div> <!-- end row#1 col one-->
+        <div class="col-sm-6">
+            <div class="col-sm-6">
+                <img class="img-responsive rounded" src="images/anonymous.JPG" style="width:400px" alt="generic human" > <br>
+            </div>
+            <br>
+            <div>
+                Biography<br><br>
+                <textarea name="bio" id="bio" cols="50" rows="10">{{ $_SESSION['member']->getBio() }}</textarea><br>
+            </div>
+            <br>
         </div>
+        <br><br>
+
+        <!-- <div> -->
+    </div>
     <br>
-<div id="btn" class="container text-md-center pb-2">
-    <button  class="btn-primary btn-sm rounded" type="submit">Contact Me!</button></div>
+    <div id="btn" class="container text-md-center pb-2">
+        <button  class="btn-primary btn-sm rounded" type="submit">Contact Me!</button></div>
 </div> <!-- close main container -->
 </body>
 </html>

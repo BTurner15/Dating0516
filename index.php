@@ -79,7 +79,6 @@ $f3->route('GET|POST /perinfo', function($f3) {
         $age= $_POST['age'];
         $gender = $_POST['gender'];
         $phone = $_POST['phone'];
-        $premium = $_POST['premium'];
 
         //Add data to hive
         $f3->set('fname', $fname);
@@ -87,7 +86,7 @@ $f3->route('GET|POST /perinfo', function($f3) {
         $f3->set('age', $age);
         $f3->set('gender', $gender);
         $f3->set('phone', $phone);
-        $f3->set('premium', $premium);
+
         if (validPerinfoForm()) {
 
             //Write data to Session
@@ -96,22 +95,29 @@ $f3->route('GET|POST /perinfo', function($f3) {
             $_SESSION['age'] = $_POST['age'];
             $_SESSION['gender'] = $_POST['gender'];
             $_SESSION['phone'] = $_POST['phone'];
-            $_SESSION['premium'] = $_POST['premium'];
+
             //now fold in the classes...parse on PremiumMember checkbox, if we are in a  mode with
-            //an "ordinary" Member then !premium will be true
-            $isPremium = $f3->get('premium');
-            if(!$isPremium)
+            //an "ordinary" Member then !premium will be true ONLY THIS TIME until submitted
+
+            //be careful here, if it is not set it doesnt exist!
+            if(!isset($_POST['premium']))
             {
                 $member = new Member($_SESSION['fname'],$_SESSION['lname'],$_SESSION['age'],
                                      $_SESSION['gender'],$_SESSION['phone']);
+                $_SESSION['memberType'] = "0";
+
             }
             else
             {
                 $member = new PremiumMember($_SESSION['fname'],$_SESSION['lname'],$_SESSION['age'],
                                             $_SESSION['gender'],$_SESSION['phone']);
+                $_SESSION['memberType'] = "1";
             }
             //store the individual either way
+
             $_SESSION['member'] = $member;
+
+            //print_r($_SESSION['memberType'] == true);
             //we are only going to store in the $_SESSION[] NOT $f3->set('member', $member);
 
             $f3->reroute('/profile');
@@ -149,7 +155,7 @@ $f3->route('GET|POST /debug', function() {
         print_r($buckaroo);
         //try something you should NOT be able to do: display interests on Member
         echo "<br>"; echo $summer->getIndoor();
-        $buckaroo->setOutdoor("this should error out");
+        //$buckaroo->setOutdoor("this should error out"); // it does, kind of
 
 });
 //Define a profile route
@@ -189,8 +195,9 @@ $f3->route('GET|POST /profile', function($f3) {
             $_SESSION['member']->setSeeking($_POST['seekSex']);
             $_SESSION['member']->setBio($_POST['bio']);
 
+            $memberType = $_SESSION['memberType'];
             //Ok, the time has come to decide whether to display the interest to the Member (or not)
-            if(!isset($_SESSION['premium']))
+            if(!$memberType)
             {
                 $f3->reroute('/summary');
             }
@@ -207,8 +214,7 @@ $f3->route('GET|POST /profile', function($f3) {
 
 //Define a interests route. We will only get here via reroute from profile.html
 $f3->route('GET|POST /interests', function($f3) {
-    $_SESSION['indoor'] = array();
-    $_SESSION['outdoor'] = array();
+
 
     if(!empty($_POST)) {
         //Display interests, until REROUTED to summary
@@ -223,18 +229,37 @@ $f3->route('GET|POST /interests', function($f3) {
     }
     $view = new Template();
     echo $view->render('views/interests.html');
+
 });
 
+//Define a route to check the interest arrays
+$f3->route('GET|POST /array', function($f3) {
+    echo "Here";
+    /*
+    $member = $_SESSION['member'];
+    $indoor = $_SESSION['indoor'];
+    $outdoor = $_SESSION['outdoor'];
+    $string = get_class($member);
+    echo "'$string'";
+    print_r($member);
+    echo "<br>"; echo "<br>";
+    print_r($indoor);
+    echo "<br>"; echo "<br>";
+
+    print_r($outdoor);
+    echo "<br>";
+    */
+});
 //Define a summary route
 $f3->route('GET|POST /summary', function($f3) {
     /*
      * want to pause here and ensure that we have not been spoofed with indoor & outdoor interests arrays
      */
     //save the data gathered in interests IF A PREMIUM MEMBER
-    print_r($_SESSION['member']);
+    $memberType = $_SESSION['memberType'];
 
-    if(isset($_SESSION['premium'])) {
-        $indoor = $_POST['indoor'];
+    if($memberType == 1) {
+        $indoor = $_SESSION['member']->getIndoor();
         $freshIndoor = array();
         $numElements = count($indoor);
         $ctr = -1;
@@ -248,7 +273,7 @@ $f3->route('GET|POST /summary', function($f3) {
         }
         $_SESSION['indoor'] = $freshIndoor;
         //perform a similar duty to check for spoofing in outdoor interests
-        $outdoor = $_POST['outdoor'];
+        $outdoor = $_SESSION['member']->getOutdoor();
         $freshOutdoor = array();
         $numElements = count($outdoor);
         $ctr = -1;
@@ -261,11 +286,12 @@ $f3->route('GET|POST /summary', function($f3) {
             }
         }
         $_SESSION['outdoor'] = $freshOutdoor;
-        //print_r($freshOutdoor);
-        //print_r($freshIndoor);
+
         //we have the two sets of allowable interests available in the two arrays loaded at
         //the beginning, our buddies indoorInterests[] and outdoorInterests[]
         //just waiting for us! Yeah!
+
+
 
         if (isset($_SESSION['indoor']) && get_class($_SESSION['member']) == "PremiumMember") {
             $_SESSION['member']->setIndoor(implode(", ", $_SESSION['indoor']));
@@ -274,11 +300,11 @@ $f3->route('GET|POST /summary', function($f3) {
         if (isset($_SESSION['outdoor']) && get_class($_SESSION['member']) == "PremiumMember") {
             $_SESSION['member']->setOutdoor(implode(", ", $_SESSION['outdoor']));
         }
-
     }
     //Display summary, which concludes Dating III
     $view = new Template();
     echo $view->render('views/summary.html');
+
 });
 //Run fat free
 $f3->run();
